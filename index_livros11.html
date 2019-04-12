@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Bulma!</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  </head>
+  <body>
+<!-- form que executa a busca. onsubmit ? a fun??o da busca. ID do typetext ? onde o javascript pegar? os valores -->
+		<div class="container">
+			<h1>Teste</h1>
+
+			<form id="form-cep" onsubmit="searchCep()" class="form form-inline">
+				<input type="text" name="cep" id="cep" placeholder="Nome do produto" class="input" value="motorola">
+				<div class="select">
+					<select>
+					  <option>Select dropdown</option>
+					  <option>With options</option>
+					</select>
+				  </div>		
+				  <input class="button" type="submit" value="Buscar!">
+				  <input class="button" type="reset" value="Reset input">
+			</form>
+
+			<div id="error" style="display: none;" class="alert alert-danger"></div>
+
+			<div id="preloader" style="display: none;" class="alert alert-info">
+				Carregando...
+			</div>
+
+			<!-- <div id="results" style="display: none;"></div>-->
+
+		</div><!--Container-->
+
+		<section class="section">
+			<div class="container">
+			  <h1 class="title">
+				Hello World
+			  </h1>
+			  <p class="subtitle">
+				My first website with <strong>Bulma</strong>!
+			  </p>
+			</div>
+		  </section>
+		  <div class="columns is-gapless">
+			<div class="column" id="results" style="display: none;">
+			  No gap
+			</div>		
+			<div class="column" id="results" style="display: none;">
+				No gap
+			  </div>	
+			  <div class="column" id="results" style="display: none;">
+				No gap
+			  </div>	
+			  <div class="column" id="results" style="display: none;">
+				No gap
+			  </div>		
+		  </div>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<script>
+			function searchCep () {
+				// Inicia o preloader
+				startPreloader ()
+				// Recupera o value do input cep
+				let cep = document.getElementById('cep').value
+				//let marca = document.getElementById('marca').value				
+				// Inicia requisi??o AJAX com o axios
+				axios.get(`http://sandbox-api.lomadee.com/v2/1548274999869d74cbd8d/product/_search?sourceId=35561801&size=20&keyword=${cep}`) //&page=${marca} adicionar isso para retornar a busca por p�gina
+						.then(response => {
+							showResults (response.data)
+						})
+						.catch(error => {
+							// console.log(error)
+							// Mostra a div com o erro
+							document.getElementById('error').style.display = 'block'
+							// Mostra a mensagem
+							document.getElementById('error').innerHTML = 'Erro inesperado'
+						})
+						.finally(() => endPreloader ())
+				event.preventDefault()
+			}
+			/*function showResults (item) {
+					//laço for para mostrar todos os resultados					
+				// Mostra a div com o resultado	
+				var tamanho = item.products.length;
+				for (i = 0; i < tamanho; i++) {				
+				document.getElementById('results').style.display = 'block'
+				//Mostra os resultados:				
+				document.getElementById('results').innerHTML += `
+					<p><b>Nome: </b> ${item.products[i].name} </p>	
+					<p><b>Preço: </b> R$ ${item.products[i].priceMin} </p>
+					<p><b>Imagem: </b> <img src="${item.products[i].thumbnail.otherFormats[i].url}" /></p>
+					<p><b>Link Produto: </b> <a target="_blank" href="${item.products[i].link}"</a> Clique aqui</p>
+					<p><b>Link Imagem: </b> <a target="_blank" href="${item.products[i].thumbnail.otherFormats[i].url}"</a> Clique aqui</p>
+					`
+
+					
+				}
+					var tamanho = item.products.length;
+					console.log(Math.random()*tamanho);
+					console.log(item.products);
+					
+					
+				
+				}	*/
+
+				
+
+				function showResults(item) {
+  					const html = item.products.reduce((html, product) => {
+    					return html + `
+							<p><b>Nome: </b> ${product.name} </p>  
+							<p><b>Preço: </b> R$ ${product.priceMin} </p>
+							<p><b>Link: </b> <a href="${product.discount}"> </a> </p>						
+							<p><b>Imagem: </b> <img src="${product.thumbnail.otherFormats[0].url}"> </p>							
+							
+							
+						`;
+  					}, '');
+					document.getElementById('results').style.display = 'block'
+					document.getElementById('results').innerHTML = html;
+					
+				}
+				//console.log(product.name);
+			
+			
+			function startPreloader () {
+				// Exibe a div de preloader
+				document.getElementById('preloader').style.display = 'block'
+				// Limpa os dados do resultado:
+				document.getElementById('results').innerHTML = ''
+				// Oculta a div com o resultado
+				document.getElementById('results').style.display = 'none'
+				// Oculta a div com o erro
+				document.getElementById('error').style.display = 'none'
+			}
+			function endPreloader () {
+				// Oculta a div de preloader
+				document.getElementById('preloader').style.display = 'none'
+			}
+		</script>
+	</body>
+</html>
+
+
+
